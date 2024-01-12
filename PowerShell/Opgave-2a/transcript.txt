@@ -1,0 +1,29 @@
+**********************
+PowerShell transcript start
+Start time: 20240105103306
+Username: FYS-NTYP\Administrator
+RunAs User: FYS-NTYP\Administrator
+Configuration Name: 
+Machine: FYS-NTYP (Microsoft Windows NT 10.0.14393.0)
+Host Application: C:\Program Files\PowerShell\7\pwsh.dll -NoProfile -ExecutionPolicy Bypass -Command Import-Module 'c:\Users\Administrator\.vscode\extensions\ms-vscode.powershell-2023.8.0\modules\PowerShellEditorServices\PowerShellEditorServices.psd1'; Start-EditorServices -HostName 'Visual Studio Code Host' -HostProfileId 'Microsoft.VSCode' -HostVersion '2023.8.0' -AdditionalModules @('PowerShellEditorServices.VSCode') -BundledModulesPath 'c:\Users\Administrator\.vscode\extensions\ms-vscode.powershell-2023.8.0\modules' -EnableConsoleRepl -StartupBanner "PowerShell Extension v2023.8.0
+Copyright (c) Microsoft Corporation.
+
+https://aka.ms/vscode-powershell
+Type 'help' to get help.
+" -LogLevel 'Normal' -LogPath 'c:\Users\Administrator\AppData\Roaming\Code\User\globalStorage\ms-vscode.powershell\logs\1704442875-a9133c26-46a6-42c1-826b-81863025ff601704442871214\EditorServices.log' -SessionDetailsPath 'c:\Users\Administrator\AppData\Roaming\Code\User\globalStorage\ms-vscode.powershell\sessions\PSES-VSCode-6772-304920.json' -FeatureFlags @() 
+Process ID: 7508
+PSVersion: 7.4.0
+PSEdition: Core
+GitCommitId: 7.4.0
+OS: Microsoft Windows 10.0.14393
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is C:\Users\Administrator\Documents\GitHub\PowerShell---Scripts\Skole\Opgave-2a\transcript.txt
+**********************
+PowerShell transcript end
+End time: 20240105103306
+**********************

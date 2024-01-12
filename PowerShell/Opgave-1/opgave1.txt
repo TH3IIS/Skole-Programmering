@@ -1,0 +1,15 @@
+"Id","CommandLine","ExecutionStatus","StartExecutionTime","EndExecutionTime","Duration"
+"1","Update-Help -force -ErrorAction SilentlyContinue","Completed","05-01-2024 09:22:14","05-01-2024 09:23:07","00:00:53.4072381"
+"2","Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+","Completed","05-01-2024 09:24:06","05-01-2024 09:24:06","00:00:00.0455906"
+"3","Write-host $PSVersionTable
+","Completed","05-01-2024 09:27:12","05-01-2024 09:27:12","00:00:00.0444538"
+"4","Get-History ""C:\Users\Administrator\Documents\GitHub\PowerShell---Scripts\Skole\Opgave 1""
+","Completed","05-01-2024 09:28:30","05-01-2024 09:28:31","00:00:00.4525777"
+"5","Get-History -path ""C:\Users\Administrator\Documents\GitHub\PowerShell---Scripts\Skole\Opgave 1""
+","Completed","05-01-2024 09:28:49","05-01-2024 09:28:49","00:00:00.1067609"
+"6","Get-History C:\Users\Administrator\Documents\GitHub\PowerShell---Scripts\Skole\Opgave 1\opgave1.txt
+","Completed","05-01-2024 09:29:22","05-01-2024 09:29:22","00:00:00.1157153"
+"7","Get-History C:\Users\Administrator\Documents\GitHub\PowerShell---Scripts\Skole\Opgave-1\opgave1.txt
+","Completed","05-01-2024 09:29:58","05-01-2024 09:29:58","00:00:00.0782023"
+"8","get-help get-history -online","Completed","05-01-2024 09:30:39","05-01-2024 09:30:39","00:00:00.1625103"
