@@ -1,0 +1,10 @@
+﻿# HENT ALLE GRUPPER
+$_AD_GRUPPER = GET-ADGROUP -FILTER {NAME -LIKE "G_*"} # |SELECT NAME, DISTINGUISHEDNAME
+CLS
+FOREACH ( $_GRUPPE IN $_AD_GRUPPER ) {
+    Write-Host $_GRUPPE.Name
+    Write-Host ("="*20)
+    $_TEMP = Get-ADGroupMember -Identity $_GRUPPE # | SELECT NAME, DISTINGUISHEDNAME
+    Write-Host $_TEMP.NAME
+    Write-Host ("-"*80)
+}

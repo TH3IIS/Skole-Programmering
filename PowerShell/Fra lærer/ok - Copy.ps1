@@ -1,0 +1,3 @@
+
+ Get-WindowsFeature | where installed
+
