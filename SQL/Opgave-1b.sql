@@ -37,7 +37,10 @@ CREATE TABLE Administration.Laerer
 GO
 
 ALTER TABLE Administration.Laerer
-   ADD CONSTRAINT c_laerer_mail check ([MAIL] LIKE '%@%.%') /* Kontrol om der MAIL kommer til at indeholde @ og . */
+    ADD CONSTRAINT c_laerer_MailEllerTLF check (MAIL IS NOT NULL OR TLFnr IS NOT NULL) -- Forhindre indsætning af data hvis Mail eller tlf ikke er indsat
+
+ALTER TABLE Administration.Laerer
+    ADD CONSTRAINT c_laerer_mail check ([MAIL] LIKE '%@%.%') /* Kontrol om der MAIL kommer til at indeholde @ og . */
 
 
 /*
@@ -65,7 +68,10 @@ CREATE TABLE Administration.Elever
 GO
 
 ALTER TABLE Administration.Elever
-   ADD CONSTRAINT c_elev_mail check ([MAIL] LIKE '%@%.%')
+    ADD CONSTRAINT c_elev_MailEllerTLF check (MAIL IS NOT NULL OR TLFnr IS NOT NULL) -- Forhindre indsætning af data hvis Mail eller tlf ikke er indsat
+
+ALTER TABLE Administration.Elever
+    ADD CONSTRAINT c_elev_mail check ([MAIL] LIKE '%@%.%') -- Checker om mail indeholder @ og . 
 
 /*
 Opretter ny tabel kaldet 'Fag' i skemaet 'Administration'
