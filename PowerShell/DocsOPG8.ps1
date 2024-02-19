@@ -42,12 +42,20 @@ Get-WindowsFeature |
 "DHCP - SCOPE
 =======================================" | Out-File $Doc -Append
 
+$DHCPScope = Get-DHCPServerV4Scope
+$DHCPDNS = (Get-DhcpServerv4OptionValue -ComputerName $env:COMPUTERNAME -ScopeId $DHCPScope.ScopeId | where optionid -EQ "6").Value
+$DHCPDefaultGateway = (Get-DhcpServerv4OptionValue -ComputerName $env:COMPUTERNAME -ScopeId $DHCPScope.ScopeId | where optionid -EQ "3").Value
+
 Get-DHCPServerV4Scope | 
     Select Name, ScopeID, StartRange, EndRange, SubnetMask, Type | 
     Format-list  | 
     Out-File $Doc -Append
 
-## Mangler DNS og Default Gateway
+"DNS : $($DHCPDNS)" | Out-File $Doc -Append
+"Default Gateway : $($DHCPDefaultGateway)" | Out-File $Doc -Append
+
+"" | Out-File $Doc -Append
+
 
 "DHCP - FAILOVER
 =======================================" | Out-File $Doc -Append
@@ -76,11 +84,23 @@ Get-DFSRConnection |
 =======================================" | Out-File $Doc -Append
 
 $Shares = Get-SmbShare 
+$SharePaths = (Get-Fileshare |
+    Where-Object {($_.Name -notLike "*$") -and ($_.Name -notlike "SYSVOL*") -and ($_.Name -notlike "NETLOGON*")}).VolumeRelativePath
+
 Get-SmbShareaccess -name $Shares.Name |
-    Where-Object {($_.Name -notLike "*$") -and ($_.Name -notcontains "NETLOGON")}  | # Ved fjernelse af SYSVOL Viser den ikke shared folder
+    Where-Object {($_.Name -notLike "*$") -and ($_.Name -notlike "SYSVOL*") -and ($_.Name -notlike "NETLOGON*")}  |
     Select-Object Name, Accountname, AccessRight |
     format-table | 
     Out-File $Doc -Append
+
+ForEach($SharePath in $SharePaths) {
+
+    Get-acl -Path $SharePath |
+        Select-Object PSChildName, PSDrive, Owner, AccessToString |
+        Format-List |
+        Out-file $Doc -Append  
+
+}
 
 ## Skal bruge et TREE for bedre at se shares
 
@@ -89,10 +109,9 @@ Get-SmbShareaccess -name $Shares.Name |
 
 Get-ADUser -Properties * -Filter * |
     Select SamAccountName, DistinguishedName, UserPrincipalName, Memberof |
+    Where-Object {$_.DistinguishedName -like "*OU_BY*"} |
     Format-List |
     Out-File $Doc -Append
-
-## Sorter urelevante fra / Sorter efter OU_NY
 
 "AD GRUPPER (Relevans til OPG8a)
 =======================================" | Out-File $Doc -Append
@@ -121,3 +140,5 @@ $GPOs = Get-GPO -all -Domain "BY-Nicki.local" |
 ForEach($GPO in $GPOs) {
     Get-GPOReport -Name $GPO -ReportType HTML -Path C:\GPOsFraOPG8a\$GPO.html
 }
+
+"Udvidet HTML Rapport kan findes i Mappen GPOsFraOPG8a" | Out-File $Doc -Append
