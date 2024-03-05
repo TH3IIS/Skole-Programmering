@@ -12,26 +12,38 @@ IF NOT EXISTS (
 CREATE DATABASE Gartneri
 GO
 
--- Create a new table called 'Plantetyper' in schema 'dbo'
+USE Gartneri
+GO
+
+CREATE SCHEMA Gartner
+GO
+
+CREATE SCHEMA Medhjaelper
+GO
+
+CREATE SCHEMA Administration
+GO
+
+-- Create a new table called 'Plantetyper' in schema 'Medhjaelper'
 -- Drop the table if it already exists
-IF OBJECT_ID('dbo.Plantetyper', 'U') IS NOT NULL
-DROP TABLE dbo.Plantetyper
+IF OBJECT_ID('Medhjaelper.Plantetyper', 'U') IS NOT NULL
+DROP TABLE Medhjaelper.Plantetyper
 GO
 -- Create the table in the specified schema
-CREATE TABLE dbo.Plantetyper
+CREATE TABLE Medhjaelper.Plantetyper
 (
     Plantetype [NVARCHAR](20) NOT NULL PRIMARY KEY, -- primary key column
-    Plantebeskrivelse [NVARCHAR](100) NULL
+    Plantebeskrivelse [NVARCHAR](200) NULL
 );
 GO
 
--- Create a new table called 'Bord' in schema 'dbo'
+-- Create a new table called 'Bord' in schema 'Medhjaelper'
 -- Drop the table if it already exists
-IF OBJECT_ID('dbo.Bord', 'U') IS NOT NULL
-DROP TABLE dbo.Bord
+IF OBJECT_ID('Medhjaelper.Bord', 'U') IS NOT NULL
+DROP TABLE Medhjaelper.Bord
 GO
 -- Create the table in the specified schema
-CREATE TABLE dbo.Bord
+CREATE TABLE Medhjaelper.Bord
 (
     Drivhus INT NOT NULL, -- primary key column
     Bord [NVARCHAR](50) NOT NULL,
@@ -40,13 +52,13 @@ CREATE TABLE dbo.Bord
 );
 GO
 
--- Create a new table called 'BordMaaler' in schema 'dbo'
+-- Create a new table called 'BordMaaler' in schema 'Gartner'
 -- Drop the table if it already exists
-IF OBJECT_ID('dbo.BordMaaler', 'U') IS NOT NULL
-DROP TABLE dbo.BordMaaler
+IF OBJECT_ID('Gartner.BordMaaler', 'U') IS NOT NULL
+DROP TABLE Gartner.BordMaaler
 GO
 -- Create the table in the specified schema
-CREATE TABLE dbo.BordMaaler
+CREATE TABLE Gartner.BordMaaler
 (
     Drivhus INT NOT NULL , -- primary key column
     Bord [NVARCHAR](50) NOT NULL,
@@ -55,47 +67,51 @@ CREATE TABLE dbo.BordMaaler
 );
 GO
 
--- Create a new table called 'Maaler' in schema 'dbo'
+-- Create a new table called 'Maaler' in schema 'Gartner'
 -- Drop the table if it already exists
-IF OBJECT_ID('dbo.Maaler', 'U') IS NOT NULL
-DROP TABLE dbo.Maaler
+IF OBJECT_ID('Gartner.Maaler', 'U') IS NOT NULL
+DROP TABLE Gartner.Maaler
 GO
 
 -- Create the table in the specified schema
-CREATE TABLE dbo.Maaler
+CREATE TABLE Gartner.Maaler
 (
     MaalerNr INT NOT NULL PRIMARY KEY, -- primary key column
     MaalerType [NVARCHAR](50) NOT NULL,
-    Maaleenhed [NVARCHAR](50) NOT NULL
+    Maaleenhed [NVARCHAR](50) NULL
 );
 GO
 
--- Create a new table called 'Maaling' in schema 'dbo'
+-- Create a new table called 'Maaling' in schema 'Administration'
 -- Drop the table if it already exists
-IF OBJECT_ID('dbo.Maaling', 'U') IS NOT NULL
-DROP TABLE dbo.Maaling
+IF OBJECT_ID('Administration.Maaling', 'U') IS NOT NULL
+DROP TABLE Administration.Maaling
 GO
 -- Create the table in the specified schema
-CREATE TABLE dbo.Maaling
+CREATE TABLE Administration.Maaling
 (
-    MaalingID INT NOT NULL PRIMARY KEY, -- primary key column
+    MaalingID INT NOT NULL IDENTITY PRIMARY KEY, -- primary key column
     MaalerNr INT NOT NULL,
     Tidspunkt DATETIME NOT NULL,
-    MaaltVaerdi INT NOT NULL    
+    MaaltVaerdi DECIMAL(10,2) NOT NULL    
 );
 GO
 
 /* Tilføjelse af Foreign keys */
 
-ALTER TABLE dbo.Bord
-    ADD FOREIGN KEY (Plantetype) REFERENCES dbo.Plantetyper(Plantetype) ON DELETE NO ACTION
+ALTER TABLE Medhjaelper.Bord
+    ADD FOREIGN KEY (Plantetype) REFERENCES Medhjaelper.Plantetyper(Plantetype) ON DELETE NO ACTION
 
-ALTER TABLE dbo.BordMaaler
-    ADD FOREIGN KEY(MaalerNr) REFERENCES dbo.Maaler(MaalerNr) ON DELETE NO ACTION,
-    FOREIGN KEY(Drivhus, Bord) REFERENCES dbo.Bord(Drivhus, Bord) ON DELETE NO ACTION
+ALTER TABLE Gartner.BordMaaler
+    ADD FOREIGN KEY(MaalerNr) REFERENCES Gartner.Maaler(MaalerNr) ON DELETE NO ACTION,
+    FOREIGN KEY(Drivhus, Bord) REFERENCES Medhjaelper.Bord(Drivhus, Bord) ON DELETE NO ACTION
 
-ALTER TABLE dbo.Maaling
-    ADD FOREIGN KEY (MaalerNr) REFERENCES dbo.Maaler(MaalerNr) ON DELETE NO ACTION
+ALTER TABLE Administration.Maaling
+    ADD FOREIGN KEY (MaalerNr) REFERENCES Gartner.Maaler(MaalerNr) ON DELETE NO ACTION
+
+ALTER TABLE Gartner.Maaler
+	ADD CONSTRAINT C_MaalerType
+		CHECK (MaalerType IN('Temperatur', 'Vand', 'Gødning', 'Lys'))
 
 -- Målernummer + tidspunkt unique
 -- Find selv planter
