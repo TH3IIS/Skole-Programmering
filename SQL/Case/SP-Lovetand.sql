@@ -1,3 +1,6 @@
+USE Gartneri
+GO
+
 -- Create a new stored procedure called 'SPUdtraekMaanedsStatistikker' in schema 'Gartner'
 -- Drop the stored procedure if it already exists
 IF EXISTS (
@@ -9,14 +12,35 @@ WHERE SPECIFIC_SCHEMA = N'Gartner'
 DROP PROCEDURE Gartner.SPUdtraekMaanedsStatistikker
 GO
 -- Create the stored procedure in the specified schema
-CREATE PROCEDURE Gartner.SPUdtraekMaanedsStatistikker
-    @param1 /*parameter name*/ int /*datatype_for_param1*/ = 0, /*default_value_for_param1*/
-    @param2 /*parameter name*/ int /*datatype_for_param1*/ = 0 /*default_value_for_param2*/
+CREATE PROCEDURE Gartner.SPUdtraekMaanedsStatistikker(@MaalerType NVARCHAR(50))
 -- add more stored procedure parameters here
 AS
-    -- body of the stored procedure
-    SELECT @param1, @param2
+   SELECT
+        TOP (100) PERCENT
+        Medhjaelper.Plantetyper.Plantetype,
+        Medhjaelper.Plantetyper.Plantebeskrivelse,
+        Gartner.Maaler.Maaleenhed,
+        FORMAT(Administration.Maaling.Tidspunkt, 'yyyy-MM') AS Tidspunkt,
+        CAST(AVG(Administration.Maaling.MaaltVaerdi) AS Decimal(10,2)) AS Gennemsnitstemperatur,
+        MIN(Administration.Maaling.MaaltVaerdi) AS Minimumstemperatur,
+        MAX(Administration.Maaling.MaaltVaerdi) AS Maximumtemperatur
+        FROM Medhjaelper.Plantetyper
+            LEFT JOIN Medhjaelper.Bord
+                ON Medhjaelper.Plantetyper.Plantetype = Medhjaelper.Bord.Plantetype
+            LEFT JOIN Gartner.BordMaaler
+                ON Medhjaelper.Bord.Drivhus = Gartner.BordMaaler.Drivhus
+                    AND Medhjaelper.Bord.Bord = Gartner.BordMaaler.Bord
+            LEFT JOIN Gartner.Maaler
+                ON Gartner.BordMaaler.MaalerNr = Gartner.Maaler.MaalerNr 
+                    AND Gartner.Maaler.MaalerType = @MaalerType
+            LEFT JOIN Administration.Maaling
+                ON Gartner.Maaler.MaalerNr = Administration.Maaling.MaalerNr
+            GROUP BY Medhjaelper.Plantetyper.Plantetype, Medhjaelper.Plantetyper.Plantebeskrivelse, Gartner.Maaler.Maaleenhed, FORMAT(Administration.Maaling.Tidspunkt, 'yyyy-MM')
+            ORDER BY Medhjaelper.Plantetyper.Plantetype ASC
+            
 GO
 -- example to execute the stored procedure we just created
-EXECUTE Gartner.SPUdtraekMaanedsStatistikker 1 /*value_for_param1*/, 2 /*value_for_param2*/
+EXECUTE Gartner.SPUdtraekMaanedsStatistikker 'temperatur' /*value_for_param1*/
 GO
+
+SELECT * FROM Gartner.V_Maalinger_Per_Plantetype
