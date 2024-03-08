@@ -1,36 +1,26 @@
-<#net use \\10.192.20.35\Lovetand /user:data 1234abcd.
-Set-Location c:\
-Copy-Item *.csv -Destination c:\temp\loevetand
-
-Set-Location \\10.192.20.35\Loevetand
-#>
-
-$RemoteCSV = "\\10.192.20.35\Loevetand\*.csv"
+$RemoteCSV = "\\10.192.20.35\Loevetand\"
 $LocalCSV = "C:\Users\Administrator\Documents\GitHub\Skole-Programmering\PowerShell\Case\csv\"
 
-function FindCSVs
+Function RemoteToLocal() 
 {
+    $RemoteCSV = "\\10.192.20.35\Loevetand\"
+    $LocalCSV = "C:\csv\"
+    $SavedDate = Import-Csv -Path "C:\SavedDate.csv"
 
-Param (
-    $StartDate,
-    $EndDate
-)
-    $CSVs = Get-ChildItem $RemoteCSV | Where-Object {($_.CreationTime -gt (Get-Date $StartDate)) -and ($_.CreationTime -lt (Get-Date $endDate))}
+    $Files = Get-Item -Path ($RemoteCSV + "*.csv") | Where-Object {$_.CreationTime -gt (Get-Date $SavedDate.CreationTime)}
 
-    ForEach ($CSV in $CSVs) {
-        Copy-Item -Path $CSV.FullName -Destination $LocalCSV 
+    ForEach ($F in $Files) {
+        Copy-Item -Path ($RemoteCSV + $F.Name) -Destination $LocalCSV 
+
+        Get-ChildItem $RemoteCSV |
+            Sort-Object CreationTime -Descending |
+            Select-Object CreationTime -first 1 |
+            Export-Csv -Path "C:\SavedDate.csv"
     }
-
 }
 
-$SavedDate = Import-Csv -Path ($ENV:TEMP + "\SavedDate.csv")
+#RemoteToLocal
 
-FindCSVs -StartDate "04-03-2024 08:00:00" -EndDate "04-03-2024 09:00:00"
+# Nyeste version på 2016-SQL
 
-function NewestCSV()
-{
-Get-ChildItem $RemoteCSV |
-    Sort-Object CreationTime -Descending |
-    Select-Object CreationTime -first 1 
-}
-
+Set-Location -Path $RemoteCSV
